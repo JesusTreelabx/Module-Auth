@@ -25,3 +25,6 @@ Representa un usuario registrado en el sistema.
   "created_at": "2025-09-15T10:05:00.000Z",
   "updated_at": "2025-09-15T10:05:00.000Z"
 }
+
+
+//Agregar las entidades faltantes!
