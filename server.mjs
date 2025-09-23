@@ -10,7 +10,7 @@ const port = 3000;
 
 // root
 app.get('/', (req, res) => {
-    res.send('Welcome to my server!');
+    res.send('Welcome to my server broh!');
 });
 
 // register
