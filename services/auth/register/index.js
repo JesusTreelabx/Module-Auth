@@ -1,6 +1,5 @@
 
 function registerUser(email, password){
-
     if(email === ""){
         return "Email no puede estar vacio"
     }
@@ -23,5 +22,3 @@ function registerUser(email, password){
 
     return {"message": "Si el email existe, te enviamos un enlace, de verificacion"}
 }
-
-console.log(registerUser("viniciusjr@gmail.com", "12345678"))
