@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to my beta server broh!');
 });
 
-const dataPath = "./users.json"
+const dataPath = "./data/users.json"
 
 // save data
 app.post('/save-data', (req, res) => {
