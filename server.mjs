@@ -96,8 +96,87 @@ app.post("/auth/register", (req, res) => {
 
 // verify-email
 app.post("/auth/verify-email", (req, res) => {
-    console.log(req.body)
-    res.send('testing verify-email')
+    //buscar el email dentro de los usuarios.
+    // 1.- que el email no este duplicado
+    // 2.- que el email exista
+
+    //si todo ok, colocar al usuario esa prop, isEmailVerified = true   
+    
+    //const email = req.body.email;
+    //const isEmailConfirmed = req.body.isEmailConfirmed;
+
+    const {email, isEmailConfirmed} = req.body
+    console.log(email)
+    console.log(isEmailConfirmed)
+    
+    
+
+    //1.-Parte para detectar duplicados
+    const uniqueEmails = new Set()
+    const duplicados = []
+
+    users.forEach(user => {
+        if(uniqueEmails.has(user.email)){
+            duplicados.push(user.email)
+        } else {
+            uniqueEmails.add(user.email)
+        }
+    })
+
+    if(duplicados.includes(email)){
+        res
+            .status(409)
+            .send({
+                message: "Al parecer el email esta duplicado, contacta a soporte"
+            })
+    }
+
+    //2.- Verificar que el email exista
+
+
+
+    //actualiza el json con esa prop: isEmailVerified: true
+
+    const updatedUser = {
+        email: existsEmail.email,
+        password: existsEmail.password,
+        isEmailConfirmed: true
+    }
+
+    console.log(updatedUser)
+    
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+        let existingData = []
+        if (!err) {
+            try {
+                existingData = JSON.parse(data)
+            } catch (parseErr) {
+                console.error('Error parsing existing JSON data:', parseErr)
+                return res.status(500).send('Error processing data')
+            }
+        }
+        
+        const dataAActualizar = existingData.filter(user => user.email !== email)
+        dataAActualizar.push(updatedUser)
+
+        const jsonString = JSON.stringify(dataAActualizar, null, 2)
+
+        fs.writeFile(dataPath, jsonString, 'utf8', (writeErr) => {
+            if (writeErr) {
+                console.error('Error writing data to file:', writeErr)
+                return res.status(500).send('Error saving data')
+            }
+            res.status(200).send('Data saved successfully!')
+        })
+    })
+    
+
+
+    res
+        .status(200)
+        .send({
+            message: "Email verificado correctamente"
+        })
 })
 
 // login
@@ -142,3 +221,4 @@ app.post("/auth/reset-password", (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
+

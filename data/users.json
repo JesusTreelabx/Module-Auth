@@ -16,11 +16,16 @@
     "password": "5544332211"
   },
   {
-    "email": "ariana_grande@gmail.com",
-    "password": "ilovemusic1104"
+    "email": "ixel_fanvar@gmail.com",
+    "password": "trancemusic01"
   },
   {
     "email": "ixel_fanvar@gmail.com",
     "password": "trancemusic01"
+  },
+  {
+    "email": "ariana_grande@gmail.com",
+    "password": "ilovemusic1104",
+    "isEmailConfirmed": true
   }
 ]
