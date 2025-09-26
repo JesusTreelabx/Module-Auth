@@ -2,6 +2,7 @@
 
 import bodyParser from "body-parser";
 import express from "express";
+import jwt from "jsonwebtoken"
 import users from "./data/users.json" with {type: 'json'}
 import fs from "fs"
 
@@ -15,8 +16,9 @@ app.get('/', (req, res) => {
     res.send('Welcome to my beta server broh!');
 });
 
-const dataPath = "./data/users.json"
 
+
+const dataPath = "./data/users.json"
 // save data
 app.post('/save-data', (req, res) => {
     const newData = req.body
@@ -46,6 +48,7 @@ app.post('/save-data', (req, res) => {
         })
     })
 })
+
 
 
 // register
@@ -94,6 +97,7 @@ app.post("/auth/register", (req, res) => {
 });
 
 
+
 // verify-email
 app.post("/auth/verify-email", (req, res) => {
     //buscar el email dentro de los usuarios.
@@ -132,8 +136,6 @@ app.post("/auth/verify-email", (req, res) => {
     }
 
     //2.- Verificar que el email exista
-
-
 
     //actualiza el json con esa prop: isEmailVerified: true
 
@@ -179,11 +181,44 @@ app.post("/auth/verify-email", (req, res) => {
         })
 })
 
+
+
 // login
 app.post("/auth/login", (req, res) => {
-    console.log(req.body)
-    res.send('testing login')
+    const {email, password} = req.body || {}
+
+    // Validar que los campos no esten vacios
+    if (!email || !password)
+        return res.status(400).send({mensaje: "Email y contrasenia son requeridos"})
+
+    // Creando el token
+    const userID = {
+        id: 1,
+        nombre: "Ariana Grande"
+    }
+
+    const clavePrivada = fs.readFileSync("private.key", "utf8")
+    const token = jwt.sign(userID, clavePrivada, { algorithm: "", expiresIn: "1h" })
+    res.send({userID, token})
+
+    console.log(token)
+
+
+    // Buscar usuario en users.json
+    const user = users.find(u => u.email === email && u.password === password)
+
+    if (user) {
+        if (user.isEmailConfirmed) {
+            return res.status(200).send({mensaje: "Inicio de sesion exitoso"})
+        } else {
+            return res.status(403).send({mensaje: "Porfavor verifica tu email primero"})
+        }
+    } else {
+        return res.status(401).send({mensaje: "Email o contraseña incorrectos"})
+    }
 })
+
+
 
 // logout
 app.post("/auth/logout", (req, res) => {
