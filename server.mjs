@@ -191,31 +191,35 @@ app.post("/auth/login", (req, res) => {
     if (!email || !password)
         return res.status(400).send({mensaje: "Email y contrasenia son requeridos"})
 
-    // Creando el token
-    const userID = {
-        id: 1,
-        nombre: "Ariana Grande"
+    const user = users.find(u => u.email === email )
+
+    if(!user){
+        return res.status(404).send({mensaje: "El usuario no existe!"})
+    }
+    if(user.password !== password){
+        return res.status(400).send({mensaje: "La password es incorrecta!"})
+    }
+    if(!user.isEmailConfirmed){
+        return res.status(400).send({mensaje: "EL email no ha sido verificado!"})
     }
 
+
+    // Creando el token
     const clavePrivada = fs.readFileSync("private.key", "utf8")
-    const token = jwt.sign(userID, clavePrivada, { algorithm: "", expiresIn: "1h" })
-    res.send({userID, token})
+    const payload = {
+        id: user.id,
+        nombre: user.email
+    }
+    const token = jwt.sign(payload, clavePrivada, { 
+        algorithm: "HS256", 
+        expiresIn: "1h" 
+    })
 
     console.log(token)
 
 
     // Buscar usuario en users.json
-    const user = users.find(u => u.email === email && u.password === password)
-
-    if (user) {
-        if (user.isEmailConfirmed) {
-            return res.status(200).send({mensaje: "Inicio de sesion exitoso"})
-        } else {
-            return res.status(403).send({mensaje: "Porfavor verifica tu email primero"})
-        }
-    } else {
-        return res.status(401).send({mensaje: "Email o contraseña incorrectos"})
-    }
+    res.send({token})
 })
 
 
