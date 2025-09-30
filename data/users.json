@@ -4,28 +4,27 @@
     "password": "crazyboo1804xd"
   },
   {
-    "email": "viniciusjr@gmail.com",
-    "password": "12446789"
-  },
-  {
     "email": "lilydepp@gmail.com",
     "password": "xl1999cp"
-  },
-  {
-    "email": "ludoviko@gmail.com",
-    "password": "5544332211"
-  },
-  {
-    "email": "ixel_fanvar@gmail.com",
-    "password": "trancemusic01"
-  },
-  {
-    "email": "ixel_fanvar@gmail.com",
-    "password": "trancemusic01"
   },
   {
     "email": "ariana_grande@gmail.com",
     "password": "ilovemusic1104",
     "isEmailConfirmed": true
+  },
+  {
+    "email": "ludoviko@gmail.com",
+    "password": "5544332211",
+    "passwordCode": 2585
+  },
+  {
+    "email": "ixel_fanvar@gmail.com",
+    "password": "trancemusic01",
+    "passwordCode": 3866
+  },
+  {
+    "email": "viniciusjr@gmail.com",
+    "password": "12446789",
+    "passwordCode": 3928
   }
 ]

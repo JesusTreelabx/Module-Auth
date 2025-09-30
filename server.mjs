@@ -171,7 +171,7 @@ app.post("/auth/verify-email", (req, res) => {
             res.status(200).send('Data saved successfully!')
         })
     })
-    
+
 
 
     res
@@ -226,8 +226,7 @@ app.post("/auth/login", (req, res) => {
 
 // logout
 app.post("/auth/logout", (req, res) => {
-    console.log(req.body)
-    res.send('testing logout')
+    //TODO!
 })
 
 // me
@@ -245,11 +244,63 @@ app.get("/sessions/:id", (req, res) => {
     res.send('testing sessions :id')
 })
 
+
+
 // forgot--password
 app.post("/auth/forgot-password", (req, res) => {
-    console.log(req.body)
-    res.send('testing forgot-password')
+    const {email} = req.body || {}
+
+    if(!email ){
+        return res.status(400).send({mensaje: "Debe incluir un correo electronico"})
+    }
+
+    const code = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000
+
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+        let existingData = []
+        if (!err) {
+            try {
+                existingData = JSON.parse(data)
+            } catch (parseErr) {
+                console.error('Error parsing existing JSON data:', parseErr)
+                return res.status(500).send('Error processing data')
+            }
+        }
+
+        const existsEmail = existingData.find(user => user.email === email)
+        if (!existsEmail) {
+            return res.status(200).send({mensaje: "Si el email existe, le enviaremos instrucciones"})
+        }
+
+        const updatedUser = {
+            email: existsEmail.email,
+            password: existsEmail.password,
+            passwordCode: code
+        }
+        console.log(updatedUser)
+
+
+        const dataAActualizar = existingData.filter(user => user.email !== email)
+        dataAActualizar.push(updatedUser)
+
+        const jsonString = JSON.stringify(dataAActualizar, null, 2)
+
+        fs.writeFile(dataPath, jsonString, 'utf8', (writeErr) => {
+            if (writeErr) {
+                console.error('Error writing data to file:', writeErr)
+                return res.status(500).send('Error saving data')
+            }
+
+        })
+    })
+
+    res.status(200).send({
+        mensaje: 'Hemos enviado un codigo a tu correo de de 4 digitos, verifica tu correo!'
+    })
 })
+
+
+
 
 // reset-password
 app.post("/auth/reset-password", (req, res) => {
