@@ -191,7 +191,7 @@ app.post("/auth/login", (req, res) => {
     if (!email || !password)
         return res.status(400).send({mensaje: "Email y contrasenia son requeridos"})
 
-    const user = users.find(u => u.email === email )
+    const user = users.find(u => u.email === email)
 
     if(!user){
         return res.status(404).send({mensaje: "El usuario no existe!"})
@@ -216,7 +216,6 @@ app.post("/auth/login", (req, res) => {
     })
 
     console.log(token)
-
 
     // Buscar usuario en users.json
     res.send({token})
@@ -250,7 +249,7 @@ app.get("/sessions/:id", (req, res) => {
 app.post("/auth/forgot-password", (req, res) => {
     const {email} = req.body || {}
 
-    if(!email ){
+    if(!email){
         return res.status(400).send({mensaje: "Debe incluir un correo electronico"})
     }
 
@@ -304,9 +303,70 @@ app.post("/auth/forgot-password", (req, res) => {
 
 // reset-password
 app.post("/auth/reset-password", (req, res) => {
-    console.log(req.body)
-    res.send('testing reset-password')
+    const {email, newPassword, passCode} = req.body || {}
+
+    if(!newPassword || !email || !passCode){
+        return res.status(400).send({mensaje: "Tus datos son incorrectos, verifica nuevamente"})
+    }
+
+
+    const user = users.find(u => u.email === email)
+    console.log(user)
+
+    if(!user){
+        return res.status(404).send({mensaje: "EL usuario no fue encontrado"})
+    }
+    if(email !== user.email){
+        return res.status(400).send({mensaje: "Porrfavor ingrese un correo valido!"})
+    }
+    if(passCode !== user.passCode){
+        return res.status(401).send({mensaje: "El codigo de restablecimiento es incorrecto!"})
+    }
+
+    fs.readFile(dataPath, 'utf8', (err, data) => {
+        let existingData = []
+        if (!err) {
+            try {
+                existingData = JSON.parse(data)
+            } catch (parseErr) {
+                console.error('Error parsing existing JSON data:', parseErr)
+                return res.status(500).send('Error processing data')
+            }
+        }
+
+        const existsEmail = existingData.find(user => user.email === email)
+        if (!existsEmail) {
+            return res.status(200).send({mensaje: "Si el email existe, le enviaremos instrucciones"})
+        }
+
+        const updatedUser = {
+            email: email,
+            password: newPassword
+        }
+        console.log(updatedUser)
+
+
+        const dataAActualizar = existingData.filter(user => user.email !== email)
+        dataAActualizar.push(updatedUser)
+
+        const jsonString = JSON.stringify(dataAActualizar, null, 2)
+
+        fs.writeFile(dataPath, jsonString, 'utf8', (writeErr) => {
+            if (writeErr) {
+                console.error('Error writing data to file:', writeErr)
+                return res.status(500).send('Error saving data')
+            }
+
+        })
+    })
+
+
+    res.status(200).send({
+        mensaje: 'Tu nueva contrasena se ha restablecido con exito!'
+    })
 })
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
