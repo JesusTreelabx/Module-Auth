@@ -1,13 +1,5 @@
 [
   {
-    "email": "meganfox@gmail.com",
-    "password": "crazyboo1804xd"
-  },
-  {
-    "email": "lilydepp@gmail.com",
-    "password": "xl1999cp"
-  },
-  {
     "email": "ariana_grande@gmail.com",
     "password": "ilovemusic1104",
     "isEmailConfirmed": true
@@ -23,8 +15,26 @@
     "passCode": 3866
   },
   {
-    "email": "viniciusjr@gmail.com",
-    "password": "2005-1991"
+    "email": "juan_mentiras@gmail.com",
+    "password": "charras.com"
   },
-  null
+  {
+    "email": "padrinos_magicos@gmail.com",
+    "password": "opuspocus",
+    "isEmailConfirmed": true
+  },
+  {
+    "email": "meganfox@gmail.com",
+    "password": "crazyboo1804xd",
+    "isEmailConfirmed": true
+  },
+  {
+    "email": "lilydepp@gmail.com",
+    "password": "johnny-depp19"
+  },
+  {
+    "email": "viniciusjr@gmail.com",
+    "password": "FIFA-Street7",
+    "passCode": 2333
+  }
 ]

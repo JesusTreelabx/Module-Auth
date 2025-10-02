@@ -55,7 +55,6 @@ app.post('/save-data', (req, res) => {
 app.post("/auth/register", (req, res) => { 
     const email = req.body.email
     const password = req.body.password
-    const fs = require('fs')
 
     if(email === ""){
         res.send({"mensaje": "Email no puede estar vacio"})
@@ -83,6 +82,10 @@ app.post("/auth/register", (req, res) => {
 
 
     console.log(users)
+
+    if(users.find(u => u.email === email)){
+        return res.status(409).send({mensaje: "Este correo ya existe, verifique nuevamente sus datos"})
+    }
     
     const emailExiste = false
     if(emailExiste){
@@ -91,7 +94,7 @@ app.post("/auth/register", (req, res) => {
     // console.log("despues de la quinta validacion")
 
 
-    res.send ({"message": "Si el email existe, te enviamos un enlace, de verificacion"})
+    res.send ({message: "Registro exitoso, verifica tu email hemos enviado un enlace de activación!"})
     
     // res.send('testing register');
 });
@@ -138,6 +141,14 @@ app.post("/auth/verify-email", (req, res) => {
     //2.- Verificar que el email exista
 
     //actualiza el json con esa prop: isEmailVerified: true
+    const existsEmail = users.find(u => u.email === email)
+
+    if(!existsEmail){
+        return res.status(404).send({mensaje: "El email proporcionado no esta registrrado!"})
+    }
+    if(existsEmail.isEmailConfirmed) {
+        return res.status(200).send({mensaje: "El email ya habia sido verificado correctamente1"})
+    }
 
     const updatedUser = {
         email: existsEmail.email,
@@ -274,7 +285,7 @@ app.post("/auth/forgot-password", (req, res) => {
         const updatedUser = {
             email: existsEmail.email,
             password: existsEmail.password,
-            passwordCode: code
+            passCode: code
         }
         console.log(updatedUser)
 
@@ -322,6 +333,10 @@ app.post("/auth/reset-password", (req, res) => {
     if(passCode !== user.passCode){
         return res.status(401).send({mensaje: "El codigo de restablecimiento es incorrecto!"})
     }
+    if(!newPassword || newPassword.length < 8){
+        return res.status(400).send({"mensaje": "Password debe contener al menos 8 caracteres"})
+    }
+
 
     fs.readFile(dataPath, 'utf8', (err, data) => {
         let existingData = []
@@ -331,7 +346,7 @@ app.post("/auth/reset-password", (req, res) => {
             } catch (parseErr) {
                 console.error('Error parsing existing JSON data:', parseErr)
                 return res.status(500).send('Error processing data')
-            }
+            } 
         }
 
         const existsEmail = existingData.find(user => user.email === email)
